@@ -40,7 +40,10 @@ export async function registerAction(_: unknown, formData: FormData) {
     .select("*")
     .single();
 
-  if (error || !user) return { error: "Não foi possível cadastrar" };
+  if (error || !user) {
+  console.error("REGISTER_ERROR:", error);
+  return { error: error?.message ?? "Não foi possível cadastrar" };
+}
   await createSession(user);
   redirect("/dashboard");
 }
