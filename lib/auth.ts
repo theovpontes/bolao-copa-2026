@@ -8,8 +8,10 @@ const cookieName = "bolao_session";
 const encoder = new TextEncoder();
 
 function secretKey() {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret || secret.length < 24) throw new Error("AUTH_SECRET must have at least 24 characters");
+  const secret = process.env.AUTH_SECRET || process.env.ADMIN_PASSWORD || process.env.ADMIN_INITIAL_PASSWORD;
+  if (!secret || secret.length < 24) {
+    throw new Error("AUTH_SECRET must have at least 24 characters");
+  }
   return encoder.encode(secret);
 }
 
@@ -29,7 +31,9 @@ export async function createSession(user: Pick<UserRow, "id" | "username" | "rol
     .setExpirationTime("14d")
     .sign(secretKey());
 
-  cookies().set(cookieName, token, {
+  const cookieStore = await cookies();
+
+  cookieStore.set(cookieName, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -38,13 +42,17 @@ export async function createSession(user: Pick<UserRow, "id" | "username" | "rol
   });
 }
 
-export function clearSession() {
-  cookies().delete(cookieName);
+export async function clearSession() {
+  const cookieStore = await cookies();
+  cookieStore.delete(cookieName);
 }
 
 export async function getSession() {
-  const token = cookies().get(cookieName)?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get(cookieName)?.value;
+
   if (!token) return null;
+
   try {
     const { payload } = await jwtVerify(token, secretKey());
     return {
@@ -60,20 +68,28 @@ export async function getSession() {
 export async function getCurrentUser() {
   const session = await getSession();
   if (!session) return null;
+
   const { data } = await supabase
     .from("users")
     .select("id, username, role, created_at, password_hash")
     .eq("id", session.id)
     .single();
+
   return data as UserRow | null;
 }
 
 export async function ensureAdminSeeded() {
   const username = process.env.ADMIN_USERNAME;
-  const initialPassword = process.env.ADMIN_INITIAL_PASSWORD;
+  const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || process.env.ADMIN_PASSWORD;
+
   if (!username || !initialPassword) return;
 
-  const { data: existing } = await supabase.from("users").select("id").eq("username", username).maybeSingle();
+  const { data: existing } = await supabase
+    .from("users")
+    .select("id")
+    .eq("username", username)
+    .maybeSingle();
+
   if (existing) return;
 
   await supabase.from("users").insert({
