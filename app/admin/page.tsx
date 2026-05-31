@@ -96,7 +96,14 @@ export default async function AdminPage() {
           <tbody>
             {matchRows.map((m) => <tr key={m.id}>
               <td>{m.match_no ?? m.id}<br /><span className="pill">{m.stage}{m.group_name ? ` • ${m.group_name}` : ""}</span></td>
-              <td>{new Date(m.kickoff_at).toLocaleString("pt-BR")}</td>
+              <td>{new Date(m.kickoff_at).toLocaleString("pt-BR", {
+                timeZone: "America/Sao_Paulo",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+              })}</td>
               <td>{m.home_team} x {m.away_team}<br /><span className="muted">{m.venue}</span></td>
               <td>
                 <form action={saveResultAction} style={{ display: "flex", gap: 8, alignItems: "center" }}>
