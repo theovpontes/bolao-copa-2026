@@ -77,7 +77,16 @@ export default async function DashboardPage() {
                   <div>
                     <span className="pill">{match.stage}{match.group_name ? ` • Grupo ${match.group_name}` : ""}</span>
                     <h3>{match.home_team} x {match.away_team}</h3>
-                    <p className="muted">{new Date(match.kickoff_at).toLocaleString("pt-BR")} {match.venue ? `• ${match.venue}` : ""}</p>
+                    <p className="muted">
+                      {new Date(match.kickoff_at).toLocaleString("pt-BR", {
+                      timeZone: "America/Sao_Paulo",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    })} {match.venue ? `• ${match.venue}` : ""}
+                    </p>
                     {match.result_home !== null && match.result_away !== null && <p>Resultado: <b>{match.result_home} x {match.result_away}</b> • seus pontos: <b>{gamePoints}</b></p>}
                   </div>
                   <form action={savePredictionAction} className="score-inputs">
