@@ -94,7 +94,12 @@ export default async function DashboardPage() {
                     <input name="pred_home" type="number" min="0" defaultValue={pred?.pred_home ?? ""} disabled={locked} required />
                     <span>x</span>
                     <input name="pred_away" type="number" min="0" defaultValue={pred?.pred_away ?? ""} disabled={locked} required />
-                    <button disabled={locked}>{locked ? "Bloqueado" : "Salvar"}</button>
+                    <button
+                      disabled={locked}
+                      className={pred && !locked ? "saved-btn" : ""}
+                    >
+                      {locked ? "Bloqueado" : pred ? "Salvo!" : "Salvar"}
+                    </button>
                   </form>
                 </div>
                 {locked && <PublicPredictions matchId={match.id} allPredictions={(allPredictions ?? []) as PredictionRow[]} users={(users ?? []) as UserRow[]} />}
