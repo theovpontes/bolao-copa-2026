@@ -59,7 +59,12 @@ export default async function DashboardPage() {
           <form action={saveSpecialAction} className="grid">
             <label>Campeão<input name="champion" defaultValue={(mySpecial as SpecialPredictionRow | null)?.champion ?? ""} disabled={lockedSpecial} /></label>
             <label>Artilheiro<input name="top_scorer" defaultValue={(mySpecial as SpecialPredictionRow | null)?.top_scorer ?? ""} disabled={lockedSpecial} /></label>
-            <button disabled={lockedSpecial}>{lockedSpecial ? "Bloqueado" : "Salvar especiais"}</button>
+            <button
+              disabled={lockedSpecial}
+              className={mySpecial && !lockedSpecial ? "saved-btn" : ""}
+            >
+            {lockedSpecial ? "Bloqueado" : mySpecial ? "Salvo!" : "Salvar especiais"}
+          </button>
           </form>
         </section>
       </div>
