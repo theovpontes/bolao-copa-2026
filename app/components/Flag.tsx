@@ -2,7 +2,7 @@ export const COUNTRY_CODE: Record<string, string> = {
   "Mexico": "mx", "South Africa": "za", "South Korea": "kr", "Czechia": "cz",
   "Canada": "ca", "Qatar": "qa", "Switzerland": "ch", "Bosnia and Herzegovina": "ba",
   "Brazil": "br", "Haiti": "ht", "Morocco": "ma", "Scotland": "gb-sct",
-  "United States": "us", "Paraguay": "py", "Australia": "au", "Türkiye": "tr",
+  "United States": "us", "Paraguay": "py", "Australia": "au", "Turkey": "tr",
   "Germany": "de", "Curaçao": "cw", "Ecuador": "ec", "Ivory Coast": "ci",
   "Netherlands": "nl", "Japan": "jp", "Tunisia": "tn", "Sweden": "se",
   "Belgium": "be", "Iran": "ir", "Egypt": "eg", "New Zealand": "nz",
