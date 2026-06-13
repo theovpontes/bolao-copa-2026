@@ -67,8 +67,7 @@ button.secondary, .btn.secondary { background: var(--card2); color: var(--txt); 
 .confronto { display: flex; align-items: center; gap: 8px; }
 .time { flex: 1; display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 15px; min-width: 80px; }
 .time.dir { justify-content: flex-end; text-align: right; }
-.placar-in { width: 42px; height: 42px; padding: 0; text-align: center; font-size: 18px; font-weight: 800; background: var(--bg); border: 1px solid var(--borda2); border-radius: 10px; color: var(--txt); -webkit-appearance: textfield; -moz-appearance: textfield; appearance: textfield; }
-.placar-in::-webkit-outer-spin-button, .placar-in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.placar-in { width: 42px; height: 42px; text-align: center; font-size: 18px; font-weight: 800; background: var(--bg); border: 1px solid var(--borda2); border-radius: 10px; color: var(--txt); }
 .placar-in:focus { outline: none; border-color: var(--aco); }
 .placar-in:disabled { opacity: .55; }
 .x { color: var(--txt2); font-weight: 700; }
