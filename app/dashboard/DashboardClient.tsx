@@ -248,3 +248,4 @@ function ReveladosTab(props: { matches: MatchRow[]; allPredictions: PredictionRo
     </div>
   );
 }
+}
