@@ -213,7 +213,7 @@ function ReveladosTab(props: { matches: MatchRow[]; allPredictions: PredictionRo
         <button className={"chip " + (fGrupo === "todos" ? "on" : "")} onClick={() => setFGrupo("todos")}>todos</button>
         {props.grupos.map((g) => <button key={g} className={"chip " + (fGrupo === g ? "on" : "")} onClick={() => setFGrupo(g)}>{g}</button>)}
       </div>
-      {fechados.length === 0 && <p className="vazio">Nenhum jogo fechado com esse filtro.<br />Os palpites aparecem após o apito de cada jogo.</p>}
+      {fechados.length === 0 && <p className="vazio">Nenhum jogo fechado com esse filtro.<br />Os palpites aparecem depois do horário de fechamento.</p>}
       {fechados.map((m) => {
         const ps = allPredictions.filter((p) => p.match_id === m.id);
         const hasResult = m.result_home !== null && m.result_away !== null;
