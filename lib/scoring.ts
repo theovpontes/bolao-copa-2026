@@ -118,3 +118,4 @@ export function buildRanking(params: {
   });
 
   return rows.sort((a, b) => b.total - a.total || b.exactScores - a.exactScores || b.outcomeHits - a.outcomeHits || a.username.localeCompare(b.username));
+}
