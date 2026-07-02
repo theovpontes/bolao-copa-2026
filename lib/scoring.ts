@@ -1,6 +1,58 @@
 import { MatchRow, PredictionRow, SpecialPredictionRow, UserRow } from "@/lib/types";
 
+const SAO_PAULO_TZ = "America/Sao_Paulo";
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+function saoPauloParts(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: SAO_PAULO_TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+
+  return {
+    year: get("year"),
+    month: get("month"),
+    day: get("day"),
+    hour: get("hour"),
+    minute: get("minute"),
+  };
+}
+
+export function predictionLockDeadline(kickoffAt: string) {
+  const kickoff = new Date(kickoffAt);
+  const parts = saoPauloParts(kickoff);
+
+  // Regra do bolão: palpites fecham às 12h de Brasília do dia do jogo.
+  // Jogos marcados exatamente para 00h em Brasília contam como o dia anterior.
+  // Exceção combinada: jogos considerados do dia 02/07/2026 fecham às 16h de Brasília.
+  const isMidnightGame = parts.hour === 0 && parts.minute === 0;
+  const effectiveDateUtc = Date.UTC(parts.year, parts.month - 1, parts.day, 0, 0, 0) - (isMidnightGame ? ONE_DAY_MS : 0);
+  const effective = new Date(effectiveDateUtc);
+  const effectiveYear = effective.getUTCFullYear();
+  const effectiveMonth = effective.getUTCMonth() + 1;
+  const effectiveDay = effective.getUTCDate();
+
+  const isSpecialJuly2 = effectiveYear === 2026 && effectiveMonth === 7 && effectiveDay === 2;
+  const deadlineHourBrt = isSpecialJuly2 ? 16 : 12;
+
+  // Brasília em julho/2026 = UTC-3, então somamos 3h para salvar o deadline em UTC.
+  const deadlineUtc = Date.UTC(effectiveYear, effectiveMonth - 1, effectiveDay, deadlineHourBrt + 3, 0, 0);
+
+  return new Date(deadlineUtc);
+}
+
 export function isLocked(kickoffAt: string) {
+  return Date.now() >= predictionLockDeadline(kickoffAt).getTime();
+}
+
+function hasStarted(kickoffAt: string) {
   return Date.now() >= new Date(kickoffAt).getTime();
 }
 
@@ -20,7 +72,7 @@ export function pointsForMatch(match: MatchRow, prediction?: PredictionRow | nul
 export function specialLocked(matches: MatchRow[]) {
   const first = [...matches].sort((a, b) => new Date(a.kickoff_at).getTime() - new Date(b.kickoff_at).getTime())[0];
   if (!first) return false;
-  return isLocked(first.kickoff_at);
+  return hasStarted(first.kickoff_at);
 }
 
 export function pointsForSpecial(prediction: SpecialPredictionRow | undefined, champion: string | null, topScorer: string | null) {
@@ -66,4 +118,3 @@ export function buildRanking(params: {
   });
 
   return rows.sort((a, b) => b.total - a.total || b.exactScores - a.exactScores || b.outcomeHits - a.outcomeHits || a.username.localeCompare(b.username));
-}
